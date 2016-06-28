@@ -10,7 +10,11 @@ This code automatically discoveres arbitration opportunites and presents a conci
 
 In the future this will be fully automated.
 
-# Obstacles to Full Automation
+# Moving Forward
+
+-Capitalizing on the largest opportunities
+-Transfering funds between exchanges/accounts
+-Getting funds to the right place at the right time
 
 # apiengine.py
 
