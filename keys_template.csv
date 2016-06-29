@@ -1,0 +1,3 @@
+api,username,public key,private key
+cex,<USERNAME>,<PUBLIC KEY>,<PRIVATE KEY>
+poloniex,,<PUBLIC KEY>,<PRIVATE KEY>
