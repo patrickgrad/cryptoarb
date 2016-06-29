@@ -12,6 +12,7 @@ class poloniex:
         self.APIKey = APIKey
         self.Secret = Secret
         self.INDEX = -1
+        self.RATE = 6 #6 calls per second allowed
 
     def post_process(self, before):
         after = before

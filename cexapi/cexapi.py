@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Author:	t0pep0
-# e-mail:	t0pep0.gentoo@gmail.com
-# Jabber:	t0pep0@jabber.ru
-# BTC   :	1ipEA2fcVyjiUnBqUx7PVy5efktz2hucb
+# Author:   t0pep0
+# e-mail:   t0pep0.gentoo@gmail.com
+# Jabber:   t0pep0@jabber.ru
+# BTC   :   1ipEA2fcVyjiUnBqUx7PVy5efktz2hucb
 # donate free =)
 import hmac
 import hashlib
@@ -18,6 +18,7 @@ class cex(object):
     __api_secret = ''
     __nonce_v = ''
     INDEX = -1
+    RATE = 1 #1 call per second allowed
 
     # Init class
     def __init__(self, username, api_key, api_secret):

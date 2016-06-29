@@ -4,14 +4,32 @@ import cexapi as cex
 import statuses as s
 
 def start_apis():
-    capi = cex.cex('up100456121','jnDM4Y9rlBdSfiOZbDSNuvWi6EY','HCmNumFRlaK6FrY1hIyLvvTqwso')
+   keys = {}
+    with open('keys.csv', 'rb') as csvfile:
+        r = csv.reader(csvfile)
+        i = 0
+        a = []
+        for row in r:
+            if i == 0:
+                a = row
+            else:
+                keys[row[0]] = {}
+                dic = keys[row[0]]
+                for col in range(1,len(row)):
+                    if col != "":
+                        dic[a[col]] = row[col]
+            i += 1
+
+    c = keys["cex"]
+    capi = cex.cex(c["username"],c["public key"],c["private key"])
     capi.INDEX = 0
     if(capi.balance().has_key('username')):
         print(s.SUCCESS + "Connected to CEX.io")
     else:
         print(s.ERROR + "Unable to connected to CEX.io")
     
-    papi = pol.poloniex('FWL8QZNC-B9PGT6V9-447WKQ8Z-7KIF5EHA','02ac097cbdad60947f0918141d95365d8b23d16bff02ab605cb061182b5b9a5427aa49f825445e59c019e43c6a9ea29d40d6a376d5dca923f86e3b6dd5396a7b')
+    p = keys["poloniex"]
+    papi = pol.poloniex(p["public key"],p["private key"])
     papi.INDEX = 1
     if(papi.returnBalances().has_key('BTC')):
         print(s.SUCCESS + "Connected to Poloniex")

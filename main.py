@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[1]:
-
 from __future__ import print_function
 
 import statuses as s
@@ -12,52 +7,11 @@ import orderengine
 import colorama
 from colorama import Fore, Back, Style
 
-#import status
 import os
 import sys
 import time
 import random
 import urllib2
-
-
-# In[2]:
-
-def run_old(context,currencies):
-    exchanges = apiengine.get_books(context,currencies,0,101) 
-
-    for i in range(len(exchanges)):
-        name1 = context[i].__class__.__name__
-        for ii in range(len(exchanges)):
-            name2 = context[ii].__class__.__name__
-            if(i != ii):
-                for currency in range(len(currencies)):
-                    bids_i = exchanges[i][currency][0]
-                    bids_i_top = bids_i[0]
-                    
-                    asks_ii = exchanges[ii][currency][1]
-                    asks_ii_top = asks_ii[0]
-                    
-                    #print(bids_i_top)
-                    #print(asks_i_top)
-                    #print(bids_ii_top)
-                    #print(asks_ii_top)
-                    #if we aren't comparing to the same exchange and the bid > ask, we can then buy at the ask and sell at the bid
-                    #print(str(bids_i_top[0]) + ">" + str(asks_ii_top[0]))
-                    #print(float(bids_i_top[0]) > float(asks_ii_top[0]))
-                    if(float(bids_i_top[0]) > float(asks_ii_top[0])):
-                        volume = 0
-                        if(bids_i_top[1] > asks_ii_top[1]):
-                            volume = asks_ii_top[1]
-                        else:
-                            volume = bids_i_top[1]
-
-                        est_profit = (float(bids_i_top[0])-float(asks_ii_top[0]))*volume
-
-                        print(s.TRADE + "BUY: " + str(volume) + " " + currencies[currency][0] + " on " + name2 + " @" + str(asks_ii_top[0]) + currencies[currency][1] + " SELL: " + name1 + " @" + str(bids_i_top[0]) + currencies[currency][1] + "(Profit: " + str(est_profit) + ")")
-            
-
-
-# In[3]:
 
 def run(context,currencies):
     exchanges = apiengine.get_books(context,currencies,0,21) 
@@ -262,63 +216,31 @@ def squat(context,data,currency):
                 print(s.TRADE + "Trade canceled.")
                 break
 
+def main():
+    context = apiengine.CONTEXT
+    currencies = apiengine.CURRENCIES
+    balance = apiengine.BALANCE
+    print(s.RUNNING + "Operating using " + str(len(currencies)) + " currency combinations")
+    addresses = apiengine.ADDRESSES
 
-# In[5]:
-
-#def main():
-
-context = apiengine.CONTEXT
-currencies = apiengine.CURRENCIES
-balance = apiengine.BALANCE
-print(s.RUNNING + "Operating using " + str(len(currencies)) + " currency combinations")
-addresses = apiengine.ADDRESSES
-
-#try:
-        #squat(context,currencies)
-#except urllib2.HTTPError:
-    #print(s.ERROR + "CONNECTION REFUSED")
-
-i = 0
-print("")
-while(i<3):
-    chars = ["-", "\\" , "|", "/"]
+    i = 0
+    print("")
+    while(i<10):
+        chars = ["-", "\\" , "|", "/"]
+        
+        try:
+            run(context,currencies)
+        except urllib2.HTTPError:
+            print(s.ERROR + "CONNECTION REFUSED")
+                
+        time.sleep(1)
+        print(chars[i%(len(chars))])
+        sys.stdout.write('\x1b[1A')   #go back up a line, makes a cool "loading" animation
+        i = i + 1
     
-    try:
-        run(context,currencies)
-    except urllib2.HTTPError:
-         print(s.ERROR + "CONNECTION REFUSED")
-            
-    time.sleep(1)
-    #sys.stdout.write('\x1b[1A')
-    #print(chars[i%(len(chars))])
-    i = i + 1
-    
-#if __name__ == '__main__':
-    #main()
+if __name__ == '__main__':
+    main()
 
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-#get info
-#cexbalance = capi.balance()
-#cexorders = capi.current_orders('BTC/USD')
-#cexbook = capi.order_book('BTC/USD')
-#print cexbalance
-
-
-# In[ ]:
-
-#ordering
-#print api.place_order('buy', 0.001, 1.7, 'BF1/BTC')
-#print api.cancel_order(6219145)
-
-
-# In[ ]:
 
 
 
