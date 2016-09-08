@@ -2,12 +2,11 @@ import colorama
 from colorama import Fore, Back, Style
 import sys
 
-DEBUG = 1   #set to 1 to enable debug mode, set to 0 to turn on regular trading, set to 2 for sandbox logging
+DEBUG = 1   #set to 1 to enable debug mode, set to 0 to turn on regular trading, set to 2 for sandbox trading + logging
 DEBUG_PRINT = 0 #set to 1 to print off a lot of extra info, set to 2 to print off even more info, set to 0 to turn off
 DEBUG_ERROR_BUY = -1 #set this to something to some string to test the exchange error handling or to -1 to not test the error handling
 DEBUG_ERROR_SELL = -1 
 DEBUG_ERROR_WITHDRAW = -1 
-
 
 ERROR = "[ " + Fore.RED + "ERROR" + Fore.WHITE + " ] : "
 SUCCESS = "[ " + Fore.GREEN + "SUCCESS" + Fore.WHITE + " ] : "
@@ -34,6 +33,8 @@ def versioning():
         print(WARNING + 'install/upgrade colorama for aesthetic appeal')
 
     return True
+
+print("made by Patrick Grady")
 
 if(not versioning()):
     quit()

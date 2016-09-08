@@ -16,6 +16,7 @@ def withdraw(api,currency,volume,address):
 		r=w_help(api,currency,volume,address)
 		if type(r) == bool:
 			print(s.SUCCESS + "Initiated transfer of " + str(volume) + currency)
+			print("ADDRESS: " + str(address))
 			return True
 		else:
 			print(s.ERROR + r)
@@ -23,11 +24,12 @@ def withdraw(api,currency,volume,address):
 
 	elif float(apiengine.BALANCE[api.INDEX][currency]['available']) > 0.015:
 		vol_new = float(apiengine.BALANCE[api.INDEX][currency]['available'])
-		print(s.FUNDWAR + "Not enough funds to withdraw that much. Partial withdraw using " + str(vol_new) + currency)
+		print(s.FUNDWAR + "Not enough funds to withdraw " + str(volume) + currency + ". Partial withdraw using " + str(vol_new) + currency)
 
 		r=w_help(api,currency,vol_new,address)
 		if type(r) == bool:
 			print(s.SUCCESS + "Initiated transfer of " + str(vol_new) + currency)
+			print("ADDRESS: " + str(address))
 			return True
 		else:
 			print(s.ERROR + r)
@@ -60,6 +62,8 @@ def w_help(api,currency,volume,address):
 		if(name == "poloniex"):
 			result = api.withdraw(currency,volume,address)
 			if result.has_key("error"):
+				if s.DEBUG_PRINT == 1:
+					print(result)
 				return result["error"]
 			else:
 				return True
@@ -75,7 +79,7 @@ def buy(api,pair,price,volume):
 
 		r=b_help(api,pair,price,volume)
 		if type(r) == bool:
-			print(s.TRADE_BUY + "BUY: " + str(volume) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(price*volume) + str(pair[1]))
+			print(s.TRADE_BUY + "BUY: " + str(volume) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(float(price)*float(volume)) + pair[1])
 			return True
 		else:
 			print(s.ERROR + r)
@@ -83,11 +87,11 @@ def buy(api,pair,price,volume):
 
 	elif apiengine.BALANCE[api.INDEX].has_key(pair[1]) and float(apiengine.BALANCE[api.INDEX][pair[1]]['available']) > 0.001:
 		vol_new = float(apiengine.BALANCE[api.INDEX][pair[1]]['available'])
-		print(s.FUNDWAR + "Not enough funds to buy that much " + pair[0] + ". Placing partial order for " + str(vol_new) + pair[0])
+		print(s.FUNDWAR + "Not enough funds to buy " + volume + pair[0] + ". Placing partial order for " + str(vol_new) + pair[0])
 
 		r=b_help(api,pair,price,volume)
 		if type(r) == bool:
-			print(s.TRADE_BUY + "BUY: " + str(vol_new) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(price*vol_new) + pair[1])
+			print(s.TRADE_BUY + "BUY: " + str(vol_new) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(float(price)*vol_new) + pair[1])
 			return True
 		else:
 			print(s.ERROR + r)
@@ -114,6 +118,8 @@ def b_help(api,pair,price,volume):
 			if(result.has_key("id")):
 				return True
 			else:
+				if s.DEBUG_PRINT == 1:
+					print(result)
 				return result["e"]
 
 		if(name == "poloniex"):
@@ -121,8 +127,10 @@ def b_help(api,pair,price,volume):
 				c = pair[1] + "T"
 			else:
 				c = pair[1]
-			result = api.buy(pair[0] + "_" + c,price,volume)
+			result = api.buy(c + "_" + pair[0] ,price,volume)
 			if result.has_key("error"):
+				if s.DEBUG_PRINT == 1:
+					print(result)
 				return result["error"]
 			else:
 				return True
@@ -137,7 +145,9 @@ def sell(api,pair,price,volume):
 
 		r=s_help(api,pair,price,volume)
 		if type(r) == bool:
-			print(s.TRADE_SELL + "SELL: " + str(volume) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(price*volume) + str(pair[1]))
+			print(price)
+			print(volume)
+			print(s.TRADE_SELL + "SELL: " + str(volume) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(float(price)*float(volume)) + pair[1])
 			return True
 		else:
 			print(s.ERROR + r)
@@ -145,11 +155,13 @@ def sell(api,pair,price,volume):
 
 	elif apiengine.BALANCE[api.INDEX].has_key(pair[0]) and float(apiengine.BALANCE[api.INDEX][pair[0]]['available']) > 0.001:
 		vol_new = float(apiengine.BALANCE[api.INDEX][pair[0]]['available'])
-		print(s.FUNDWAR + "Not enough funds to sell that much " + pair[0] + ". Placing partial order for " + str(vol_new) + pair[0])
+		print(s.FUNDWAR + "Not enough funds to sell " + str(volume) + pair[0] + ". Placing partial order for " + str(vol_new) + pair[0])
 
-		r=s_help(api,pair,price,volume)
+		r=s_help(api,pair,price,vol_new)
 		if type(r) == bool:
-			print(s.TRADE_SELL + "SELL: " + str(vol_new) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(price*vol_new) + pair[1])
+			print(price)
+			print(volume)
+			print(s.TRADE_SELL + "SELL: " + str(vol_new) + " " + pair[0] + " @ " + str(price) + " " + pair[1] + " TOTAL: " + str(float(price)*vol_new) + pair[1])
 			return True
 		else:
 			print(s.ERROR + r)
@@ -176,6 +188,8 @@ def s_help(api,pair,price,volume):
 			if(result.has_key("id")):
 				return True
 			else:
+				if s.DEBUG_PRINT == 1:
+					print(result)
 				return result["e"]
 
 		if(name == "poloniex"):
@@ -183,8 +197,10 @@ def s_help(api,pair,price,volume):
 				c = pair[1] + "T"
 			else:
 				c = pair[1]
-			result = api.sell(pair[0] + "_" + c,price,volume)
+			result = api.sell(c + "_" + pair[0],price,volume)
 			if result.has_key("error"):
+				if s.DEBUG_PRINT == 1:
+					print(result)
 				return result["error"]
 			else:
 				return True

@@ -1,10 +1,11 @@
+import csv
 import poloniex as pol
 import cexapi as cex
 
 import statuses as s
 
 def start_apis():
-   keys = {}
+    keys = {}
     with open('keys.csv', 'rb') as csvfile:
         r = csv.reader(csvfile)
         i = 0
@@ -44,7 +45,7 @@ CONTEXT = start_apis()
 
 def get_currencies(context):
     #TODO: would like for this to work automatically some day           
-    return [("BTC","USD"),("LTC","USD"),("ETH","USD"),("ETH","BTC"),("LTC","BTC")]
+    return [("BTC","USD"),("LTC","USD"),("ETH","USD")]
 
 CURRENCIES = get_currencies(CONTEXT)
 
@@ -92,13 +93,11 @@ def get_addresses(context, currencies):
 
             elif(name == 'poloniex'): #Poloniex api
                 call = api.api_query('returnDepositAddresses')
-                #print(call)
                 addrs = []
                 for curr in currencies:
                     for x in curr:
                         if(x != "USD"):
                             for y,data in call.iteritems():
-                                #print(x + " " + y)
                                 if(x==y):
                                     addrs.append((y,data))
                 addresses.append(addrs)
@@ -121,8 +120,6 @@ def get_books(context,currencies,start,end): #start is inclusive, end is exclusi
                 else:
                     bok = (book['bids'][start:end][start:end],book['asks'][start:end][start:end])
                 b.append(bok)
-            #print("CEX.io book: ")
-            #print(b)
             books.append(b)
 
         elif(name == 'poloniex'): #Poloniex api
@@ -141,7 +138,7 @@ def get_books(context,currencies,start,end): #start is inclusive, end is exclusi
     return books
 
 
-#TODO: highest priority right here
+#TODO: get the real fees
 def get_fees(context):
     fees = []
     for x in range(len(context)):

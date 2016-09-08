@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import statuses as s
+
 import apiengine
 import orderengine
 
@@ -10,7 +11,6 @@ from colorama import Fore, Back, Style
 import os
 import sys
 import time
-import random
 import urllib2
 
 def run(context,currencies):
@@ -42,7 +42,9 @@ def run(context,currencies):
 #        A trade consists of selling a currency on one market and buying on another and immediatly sending the
 #        purchased currency to the account we just sold out of. Transfer some coin with a good reverse conversion 
 #        rate to the buying account and convert to the original coin.
+#    Sort of implemented:
 #    3. Make sure there are sufficient funds to execute trades, if not, just partially execute
+#    TODO:
 #    4. Start making orders that are very slightly cheaper than the ask and slightly more expensive than the bid
 #        in an effort to hold onto the opportunity. 
 #    5. Stop doing this once orders take longer than two minutes to execute.
@@ -53,8 +55,8 @@ def squat(context,data,currency):
     api_i = context[0]
     api_ii = context[1]
 
-    fee_i = .0000
-    fee_ii = .0000
+    fee_i = .0028  #TODO: use the APIs to get the actual fees, not the guestimate fees
+    fee_ii = .0028
     
     i = 0
     ii = 0
@@ -74,7 +76,8 @@ def squat(context,data,currency):
         volume = float(bids_i[i][1])
 
     c = float(bids_i[i][0])*volume
-    cc = float(asks_ii[ii][0])*volume
+    c = c - (c * fee_i)
+    cc = float(asks_ii[ii][0])*volume*(1+fee_i)
     profit = c-cc
 
     max_buy_vol = float(asks_ii[ii][1])
@@ -89,7 +92,8 @@ def squat(context,data,currency):
             volume = float(bids_i[i+1][1])
 
         c = float(bids_i[i+1][0])*volume
-        cc = float(asks_ii[ii][0])*volume
+        c = c - (c * fee_i)
+        cc = float(asks_ii[ii][0])*volume*(1+fee_i)
 
         profit_new = profit + c-cc
         if(profit_new > profit):
@@ -105,7 +109,8 @@ def squat(context,data,currency):
             volume = float(bids_i[i][1])
 
         c = float(bids_i[i][0])*volume
-        cc = float(asks_ii[ii+1][0])*volume
+        c = c - (c * fee_i)
+        cc = float(asks_ii[ii][0])*volume*(1+fee_i)
 
         profit_new = profit + c-cc
         if(profit_new > profit):
@@ -216,7 +221,7 @@ def squat(context,data,currency):
                 print(s.TRADE + "Trade canceled.")
                 break
 
-def main():
+def main():    
     context = apiengine.CONTEXT
     currencies = apiengine.CURRENCIES
     balance = apiengine.BALANCE
@@ -232,11 +237,13 @@ def main():
             run(context,currencies)
         except urllib2.HTTPError:
             print(s.ERROR + "CONNECTION REFUSED")
+            i -= 1
                 
         time.sleep(1)
-        print(chars[i%(len(chars))])
+        if s.DEBUG_PRINT == 0:
+            print(chars[i%(len(chars))])
         sys.stdout.write('\x1b[1A')   #go back up a line, makes a cool "loading" animation
-        i = i + 1
+        i += 1
     
 if __name__ == '__main__':
     main()
